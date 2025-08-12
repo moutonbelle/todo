@@ -22,6 +22,10 @@ class Project {
         this.todos = [];
     }
 
+    getTodoByID(todoID) {
+        return this.todos.find(todo => todo.id === todoID);
+    }
+
     addTodo (todo) {
         this.todos.push(todo);
     }
@@ -53,6 +57,10 @@ class ToDoSystem {
     removeTodo (projectID, todoID) {
         this.getProjectByID(projectID).removeTodoByID(todoID);
     }
+
+    updateTodo (projectID, todoID, updates) {
+        this.getProjectByID(projectID).getTodoByID(todoID).update(updates);
+    }
 }
 
 class ToDoController {
@@ -66,6 +74,8 @@ class ToDoController {
     addTodo (projectID, todoData) {this.system.addTodo(projectID, todoData);}
 
     removeTodo (projectID, todoID) {this.system.removeTodo(projectID, todoID);}
+
+    updateTodo (projectID, todoID, updates) {this.system.updateTodo(projectID, todoID, updates);}
 }
 
 class ToDoRenderer {
@@ -87,4 +97,6 @@ let todoController = new ToDoController(todos, renderer);
 todoController.addProject("Tiger");
 todoController.addTodo(todoController.system.projects[0].id, {title: "Fetch tiger", description: "Go to the jungle, catch the tiger, and return him", dueDate: "05-15-1999", priority: "high"});
 todoController.addTodo(todoController.system.projects[0].id, {title: "Tame parrot", description: "Find a beautiful parrot and slowly charm it with food and pets", dueDate: "12-03-2001", priority: "medium"});
+todoController.renderer.draw(todoController.system);
+todoController.updateTodo(todoController.system.projects[0].id, todoController.system.projects[0].todos[0].id, {description: "Go to the North of India, find a tiger, catch him with bait, and return him, no exceptions", dueDate: "06-16-2023"});
 todoController.renderer.draw(todoController.system);
