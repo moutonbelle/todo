@@ -13,6 +13,16 @@ class Todo {
         this.dueDate = updates.dueDate || this.dueDate;
         this.priority = updates.priority || this.priority;
     }
+
+    get details () {
+        return {
+            id: this.id, 
+            title: this.title, 
+            description: this.description, 
+            dueDate: this.dueDate, 
+            priority: this.priority,
+        };
+    }
 }
 
 class Project {
@@ -83,7 +93,7 @@ class ToDoRenderer {
         todos.projects.forEach(project => {
             console.log(project.id, project.name);
             project.todos.forEach(todo => {
-                console.log(todo);
+                console.log(todo.details);
             });
         });
     }
@@ -94,9 +104,13 @@ let renderer = new ToDoRenderer();
 
 let todoController = new ToDoController(todos, renderer);
 
-todoController.addProject("Tiger");
-todoController.addTodo(todoController.system.projects[0].id, {title: "Fetch tiger", description: "Go to the jungle, catch the tiger, and return him", dueDate: "05-15-1999", priority: "high"});
-todoController.addTodo(todoController.system.projects[0].id, {title: "Tame parrot", description: "Find a beautiful parrot and slowly charm it with food and pets", dueDate: "12-03-2001", priority: "medium"});
-todoController.renderer.draw(todoController.system);
-todoController.updateTodo(todoController.system.projects[0].id, todoController.system.projects[0].todos[0].id, {description: "Go to the North of India, find a tiger, catch him with bait, and return him, no exceptions", dueDate: "06-16-2023"});
-todoController.renderer.draw(todoController.system);
+function testSuite () {
+    todoController.addProject("Tiger");
+    todoController.addTodo(todoController.system.projects[0].id, {title: "Fetch tiger", description: "Go to the jungle, catch the tiger, and return him", dueDate: "05-15-1999", priority: "high"});
+    todoController.addTodo(todoController.system.projects[0].id, {title: "Tame parrot", description: "Find a beautiful parrot and slowly charm it with food and pets", dueDate: "12-03-2001", priority: "medium"});
+    todoController.renderer.draw(todoController.system);
+    todoController.updateTodo(todoController.system.projects[0].id, todoController.system.projects[0].todos[0].id, {description: "Go to the North of India, find a tiger, catch him with bait, and return him, no exceptions", dueDate: "06-16-2023"});
+    todoController.renderer.draw(todoController.system);
+}
+
+testSuite();
