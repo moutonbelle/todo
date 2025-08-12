@@ -1,5 +1,5 @@
 {
-  "name": "webpack-template",
+  "name": "todo",
   "version": "1.0.0",
   "main": "dist/main.js",
  "scripts": {
@@ -10,15 +10,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/moutonbelle/webpack-template.git"
+    "url": "git+https://github.com/moutonbelle/todo.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/moutonbelle/webpack-template/issues"
+    "url": "https://github.com/moutonbelle/todo/issues"
   },
-  "homepage": "https://github.com/moutonbelle/webpack-template#readme",
+  "homepage": "https://github.com/moutonbelle/todo#readme",
   "description": "",
   "devDependencies": {
     "css-loader": "^7.1.2",
