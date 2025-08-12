@@ -1,5 +1,6 @@
 class Todo {
     constructor (todoData) {
+        this.id = crypto.randomUUID();
         this.title = todoData.title || null;
         this.description = todoData.description || null;
         this.dueDate = todoData.dueDate || null;
@@ -25,14 +26,32 @@ class Project {
         this.todos.push(todo);
     }
 
-    removeTodo (todo) {
-        this.todos.splice(this.todos.findIndex(item => item === todo), 1);
+    removeTodoByID (todoID) {
+        this.todos.splice(this.todos.findIndex(todo => todo.id === todoID), 1);
     }
 }
 
 class ToDoSystem {
     constructor () {
         this.projects = [];
+    }
+
+    getProjectByID(projectID) {
+        return this.projects.find(project => project.id === projectID);
+    }
+
+    addProject (projectName) {
+        let newProject = new Project(projectName);
+        this.projects.push(newProject);
+    }
+
+    addTodo (projectID, todoData) {
+        let newTodo = new Todo(todoData);
+        this.getProjectByID(projectID).addTodo(newTodo);
+    }
+
+    removeTodo (projectID, todoID) {
+        this.getProjectByID(projectID).removeTodoByID(todoID);
     }
 }
 
@@ -42,16 +61,11 @@ class ToDoController {
         this.renderer = renderer;
     }
 
-    addProject (projectName) {
-        let newProject = new Project(projectName);
-        this.system.projects.push(newProject);
-        // console.log(`Added ${projectName}`)
-    }
+    addProject (projectName) {this.system.addProject(projectName);}
 
-    addTodo (projectID, todoData) {
-        let newTodo = new Todo(todoData);
-        this.system.projects[this.system.projects.findIndex(project => project.id === projectID)].todos.push(newTodo);
-    }
+    addTodo (projectID, todoData) {this.system.addTodo(projectID, todoData);}
+
+    removeTodo (projectID, todoID) {this.system.removeTodo(projectID, todoID);}
 }
 
 class ToDoRenderer {
