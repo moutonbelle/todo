@@ -23,4 +23,13 @@ export default class Todo {
             priority: this.priority,
         };
     }
+
+    get formattedDetails () {
+        return {
+            "Title": this.title,
+            "Description": this.description,
+            "Due Date": this.dueDate,
+            "Priority": this.priority,
+        }
+    }
 }
