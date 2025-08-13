@@ -84,6 +84,10 @@ class ToDoController {
             this.uiState.todoState[e.target.dataset.todoID] = "expanded";
             this.draw();
         }
+        if (e.target.classList.contains("new-project-button")) {
+            this.addProject(document.querySelector(".input-project-name").value);
+            this.draw();
+        }
     }
 
 }
@@ -299,6 +303,18 @@ class ToDoRenderer {
                 }
             })
         });
+
+        let newProjectDiv = document.createElement("div");
+        newProjectDiv.classList.add("new-project-container");
+        let newProjectInput = document.createElement("input");
+        newProjectInput.classList.add("input-project-name");
+        newProjectInput.placeholder = "New project name";
+        let newProjectButton = document.createElement("button");
+        newProjectButton.classList.add("new-project-button");
+        newProjectButton.textContent = "Create Project";
+
+        newProjectDiv.append(newProjectInput, newProjectButton);
+        mainDiv.append(newProjectDiv);
     }
 }
 
