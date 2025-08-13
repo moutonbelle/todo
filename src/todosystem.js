@@ -10,8 +10,8 @@ export default class ToDoSystem {
         return this.projects.find(project => project.id === projectID);
     }
 
-    addProject (projectName) {
-        let newProject = new Project(projectName);
+    addProject (projectName, projectID = null) {
+        let newProject = new Project(projectName, projectID);
         this.projects.push(newProject);
     }
     

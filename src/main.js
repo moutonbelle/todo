@@ -20,13 +20,18 @@ class ToDoController {
         this.system = system;
         this.renderer = renderer;
         this.target = target;
+
         this.uiState = {};
         this.uiState.todoState = {};
+
+        if (localStorage.systemData) { this.load(); }
+
+        this.draw();
 
         target.addEventListener("click", this.clickHandler);
     }
 
-    addProject(projectName) { this.system.addProject(projectName); }
+    addProject(projectName, projectID = null) { this.system.addProject(projectName, projectID); }
 
     removeProject(projectID) { this.system.removeProject(projectID); }
 
@@ -53,10 +58,36 @@ class ToDoController {
 
     draw() { renderer.draw(this.target, this.system, this.uiState); }
 
+    save() {
+        localStorage.clear();
+        let systemData = {};
+        let i = 0;
+        this.system.projects.forEach(project => {
+            systemData[i] = project.data;
+            i++;
+        });
+        localStorage.systemData = JSON.stringify(systemData);
+    }
+
+    load() {
+        this.system.projects = [];
+        let systemData = JSON.parse(localStorage.systemData);
+
+        for (let project in systemData) {
+            this.addProject(systemData[project].name, systemData[project].id);
+            systemData[project].todos.forEach(todo => {
+                this.addTodo(systemData[project].id, todo);
+            });
+        }
+
+        this.draw();
+    }
+
     clickHandler = (e) => {
         if (e.target.classList.contains("delete-todo")) {
             this.removeTodo(e.target.dataset.projectID, e.target.dataset.todoID);
             this.draw();
+            this.save();
         }
         if (e.target.classList.contains("expand-todo")) {
             this.uiState.todoState[e.target.dataset.todoID] = "expanded";
@@ -80,19 +111,23 @@ class ToDoController {
             this.updateTodo(e.target.dataset.projectID, e.target.dataset.todoID, updates)
             this.uiState.todoState[e.target.dataset.todoID] = "expanded";
             this.draw();
+            this.save();
         }
         if (e.target.classList.contains("cancel-todo-edit")) {
             if (this.system.getProjectByID(e.target.dataset.projectID).getTodoByID(e.target.dataset.todoID).title === null) this.removeTodo(e.target.dataset.projectID, e.target.dataset.todoID);
             else this.uiState.todoState[e.target.dataset.todoID] = "expanded";
             this.draw();
+            this.save();
         }
         if (e.target.classList.contains("new-project-button")) {
             this.addProject(document.querySelector(".input-project-name").value);
             this.draw();
+            this.save();
         }
         if (e.target.classList.contains("delete-project")) {
             this.removeProject(e.target.dataset.projectID);
             this.draw();
+            this.save();
         }
         if (e.target.classList.contains("add-todo")) {
             let id = this.system.addTodo(e.target.dataset.projectID, {});
@@ -104,8 +139,8 @@ class ToDoController {
 }
 
 class ToDoRenderer {
-    clear() {
-        document.querySelector("div#projects").replaceChildren();
+    clear(mainDiv) {
+        mainDiv.replaceChildren();
     }
 
     drawExpandedTodo(project, todo) {
@@ -250,7 +285,7 @@ class ToDoRenderer {
         newline = document.createElement("p");
         propertyName = document.createElement("strong");
         propertyName.textContent = "Priority: ";
-        
+
         newInput = document.createElement("select");
         newInput.dataset.todoID = todo.id;
         newInput.dataset.projectID = project.id;
@@ -269,7 +304,7 @@ class ToDoRenderer {
     }
 
     draw(mainDiv, todos, uiState) {
-        this.clear();
+        this.clear(mainDiv);
 
         todos.projects.forEach(project => {
             let projectDiv = document.createElement("div");
@@ -335,20 +370,3 @@ class ToDoRenderer {
 let todos = new ToDoSystem();
 let renderer = new ToDoRenderer();
 let todoController = new ToDoController(document.querySelector("div#projects"), todos, renderer);
-
-function testSuiteHTML() {
-    let mainDiv = document.querySelector("div#projects");
-    todoController.addProject("Tiger");
-    todoController.addProject("Dolphin");
-    todoController.addTodo(todoController.system.projects[0].id, { title: "Fetch tiger", description: "Go to the jungle, catch the tiger, and return him", dueDate: "05-15-1999", priority: "High" });
-    todoController.addTodo(todoController.system.projects[0].id, { title: "Tame parrot", description: "Find a beautiful parrot and slowly charm it with food and pets", dueDate: "12-03-2001", priority: "Medium" });
-    todoController.draw();
-    todoController.updateTodo(todoController.system.projects[0].id, todoController.system.projects[0].todos[0].id, { description: "Go to the North of India, find a tiger, catch him with bait, and return him, no exceptions", dueDate: "06-16-2023" });
-    todoController.draw();
-    todoController.moveTodo(todoController.system.projects[0].id, todoController.system.projects[1].id, todoController.system.projects[0].todos[0].id)
-    todoController.draw();
-    todoController.expandTodo(todoController.system.projects[0], todoController.system.projects[0].todos[0]);
-    todoController.collapseTodo(todoController.system.projects[0], todoController.system.projects[0].todos[0]);
-}
-
-testSuiteHTML();

@@ -3,7 +3,6 @@
     padding: 0;
     box-sizing: border-box;
     font-family: 'Iowan Old Style', 'Palatino Linotype', 'URW Palladio L', P052, serif;
-font-weight: normal;;
 }
 
 body {
@@ -19,6 +18,7 @@ input {
 textarea {
     display: block;
     width: 100%;
+    padding: 0.2rem;
 }
 
 div#projects {
@@ -48,11 +48,15 @@ div.todo {
     & p {
         margin-top: 0.5rem;
     }
+
+    & p:first-of-type {
+        margin-top: 1.5rem;
+    }
 }
 
 div.icons {
     position: absolute;
-    top: 10gitpx;
+    top: 10px;
     right: 10px;
 
     display: flex;
