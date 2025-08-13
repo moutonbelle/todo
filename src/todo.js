@@ -27,8 +27,8 @@ export default class Todo {
     get formattedDetails () {
         return {
             "Title": this.title,
-            "Description": this.description,
             "Due Date": this.dueDate,
+            "Description": this.description,
             "Priority": this.priority,
         }
     }

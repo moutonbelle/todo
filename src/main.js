@@ -1,4 +1,9 @@
 import "./styles.css";
+
+import deleteIconURL from "./icons/delete.svg";
+import collapseIconURL from "./icons/collapse.svg";
+import expandIconURL from "./icons/expand.svg";
+
 import ToDoSystem from "./todosystem.js";
 
 class ToDoController {
@@ -50,6 +55,19 @@ class ToDoRenderer {
                 let todoDiv = document.createElement("div");
                 todoDiv.classList.add("todo");
                 todoDiv.dataset.id = todo.id;
+
+                let iconsDiv = document.createElement("div");
+                iconsDiv.classList.add("icons");
+
+                let deleteIcon = document.createElement("img");
+                deleteIcon.src = deleteIconURL;
+
+                let expandIcon = document.createElement("img");
+                expandIcon.id = "expandCollapse"
+                expandIcon.src = expandIconURL;
+
+                iconsDiv.append(expandIcon, deleteIcon);
+                todoDiv.append(iconsDiv);
 
                 for (let property in todo.formattedDetails) {
                     let line = document.createElement("p");
