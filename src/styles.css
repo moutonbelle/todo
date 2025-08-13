@@ -44,3 +44,22 @@ div.icons {
     display: flex;
     gap: 5px;
 }
+
+div.new-project {
+    display: flex;
+    gap: 10px;
+
+    margin-top: 0.5rem;
+
+    & input {
+        padding: 0.2rem 1rem;
+        border-radius: 5px;
+        border: 1px solid black;
+    }
+
+    & button {
+        padding: 0.2rem 1rem;
+        border-radius: 5px;
+        bordeR: 1px solid black;
+    }
+}

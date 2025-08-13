@@ -2,8 +2,6 @@
     TODO
     -- Add todos
     -- Add projects
-    -- Edit todo
-    -- Move todo to new project
     -- Persist to local storage
 */
 
