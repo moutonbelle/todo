@@ -18,6 +18,7 @@ export default class ToDoSystem {
     addTodo (projectID, todoData) {
         let newTodo = new Todo(todoData);
         this.getProjectByID(projectID).addTodo(newTodo);
+        return newTodo.id;
     }
 
     removeTodo (projectID, todoID) {
