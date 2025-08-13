@@ -22,7 +22,9 @@ class ToDoController {
 
     moveTodo(oldProjectID, newProjectID, todoID) { this.system.moveTodo(oldProjectID, newProjectID, todoID) }
 
-    expandTodo(todo) {this.renderer.drawExpandedTodo(todo);}
+    expandTodo(todo) { this.renderer.drawExpandedTodo(todo); }
+
+    collapseTodo(todo) { this.renderer.drawCollapsedTodo(todo); }
 }
 
 class ToDoRenderer {
@@ -54,7 +56,7 @@ class ToDoRenderer {
 
         iconsDiv.append(collapseIcon, deleteIcon);
         targetDiv.append(iconsDiv);
-        
+
         for (let property in todo.formattedDetails) {
             let line = document.createElement("p");
             let propertyName = document.createElement("strong");
@@ -62,6 +64,35 @@ class ToDoRenderer {
             line.append(propertyName, todo.formattedDetails[property]);
             targetDiv.append(line);
         }
+    }
+
+    drawCollapsedTodo(todo) {
+        let targetDiv = document.querySelector(`div[data-id="${todo.id}"`);
+        targetDiv.replaceChildren();
+        let iconsDiv = document.createElement("div");
+        iconsDiv.classList.add("icons");
+
+        let deleteIcon = document.createElement("img");
+        deleteIcon.src = deleteIconURL;
+
+        let expandIcon = document.createElement("img");
+        expandIcon.id = "expandCollapse"
+        expandIcon.src = expandIconURL;
+
+        iconsDiv.append(expandIcon, deleteIcon);
+        targetDiv.append(iconsDiv);
+
+        let lineTitle = document.createElement("p");
+        let labelTitle = document.createElement("strong");
+        labelTitle.innerHTML = "Title: ";
+        lineTitle.append(labelTitle, todo.title);
+
+        let lineDueDate = document.createElement("p");
+        let labelDueDate = document.createElement("strong");
+        labelDueDate.innerHTML = "Due Date: ";
+        lineDueDate.append(labelDueDate, todo.dueDate);
+
+        targetDiv.append(lineTitle, lineDueDate);
     }
 
     draw(todos) {
@@ -77,49 +108,16 @@ class ToDoRenderer {
             projectName.classList.add("project-name");
             projectName.textContent = project.name;
             projectDiv.append(projectName);
+            mainDiv.append(projectDiv);
 
             project.todos.forEach(todo => {
                 let todoDiv = document.createElement("div");
                 todoDiv.classList.add("todo");
                 todoDiv.dataset.id = todo.id;
-
-                let iconsDiv = document.createElement("div");
-                iconsDiv.classList.add("icons");
-
-                let deleteIcon = document.createElement("img");
-                deleteIcon.src = deleteIconURL;
-
-                let expandIcon = document.createElement("img");
-                expandIcon.id = "expandCollapse"
-                expandIcon.src = expandIconURL;
-
-                iconsDiv.append(expandIcon, deleteIcon);
-                todoDiv.append(iconsDiv);
-
-                let lineTitle = document.createElement("p");
-                let labelTitle = document.createElement("strong");
-                labelTitle.innerHTML = "Title: ";
-                lineTitle.append(labelTitle, todo.title);
-
-                let lineDueDate = document.createElement("p");
-                let labelDueDate = document.createElement("strong");
-                labelDueDate.innerHTML = "Due Date: ";
-                lineDueDate.append(labelDueDate, todo.dueDate);
-
-                todoDiv.append(lineTitle, lineDueDate);
-
-                // for (let property in todo.formattedDetails) {
-                //     let line = document.createElement("p");
-                //     let propertyName = document.createElement("strong");
-                //     propertyName.textContent = property + ": ";
-                //     line.append(propertyName, todo.formattedDetails[property]);
-                //     todoDiv.append(line);
-                // }
-
                 projectDiv.append(todoDiv);
-            })
 
-            mainDiv.append(projectDiv);
+                this.drawCollapsedTodo(todo);
+            })
         });
     }
 }
@@ -151,7 +149,8 @@ function testSuiteHTML() {
     todoController.renderer.draw(todoController.system);
     todoController.moveTodo(todoController.system.projects[0].id, todoController.system.projects[1].id, todoController.system.projects[0].todos[0].id)
     todoController.renderer.draw(todoController.system);
-    todoController.expandTodo(todoController.system.projects[0].todos[0])
+    todoController.expandTodo(todoController.system.projects[0].todos[0]);
+    todoController.collapseTodo(todoController.system.projects[0].todos[0]);
 }
 
 testSuiteHTML();
