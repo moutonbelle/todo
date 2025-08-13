@@ -11,6 +11,8 @@ class ToDoController {
         this.system = system;
         this.renderer = renderer;
         this.target = target;
+        this.uiState = {};
+        this.uiState.expandedTodos = {};
 
         target.addEventListener("click", this.clickHandler);
     }
@@ -25,15 +27,30 @@ class ToDoController {
 
     moveTodo(oldProjectID, newProjectID, todoID) { this.system.moveTodo(oldProjectID, newProjectID, todoID) }
 
-    expandTodo(todo) { this.renderer.drawExpandedTodo(todo);}
+    expandTodo(project, todo) {
+        this.renderer.drawExpandedTodo(project, todo);
+        this.uiState.expandedTodos[todo.id] = true;
+    }
 
-    collapseTodo(project, todo) { this.renderer.drawCollapsedTodo(project, todo);}
+    collapseTodo(project, todo) {
+        this.renderer.drawCollapsedTodo(project, todo);
+        delete this.uiState.expandedTodos[todo.id];
+    }
 
-    draw() {renderer.draw(this.target, this.system);}
+    draw() { renderer.draw(this.target, this.system, this.uiState); }
 
     clickHandler = (e) => {
         if (e.target.classList.contains("delete-todo")) {
             this.removeTodo(e.target.dataset.projectID, e.target.dataset.todoID);
+            this.draw();
+        }
+        if (e.target.classList.contains("expand-todo")) {
+            this.uiState.expandedTodos[e.target.dataset.todoID] = true;
+            // console.log("LOG: ", this.uiState);
+            this.draw();
+        }
+        if (e.target.classList.contains("collapse-todo")) {
+            delete this.uiState.expandedTodos[e.target.dataset.todoID];
             this.draw();
         }
     }
@@ -54,16 +71,22 @@ class ToDoRenderer {
         document.querySelector("div#projects").replaceChildren();
     }
 
-    drawExpandedTodo(todo) {
+    drawExpandedTodo(project, todo) {
         let targetDiv = document.querySelector(`div[data-id="${todo.id}"`);
         targetDiv.replaceChildren();
         let iconsDiv = document.createElement("div");
         iconsDiv.classList.add("icons");
 
         let deleteIcon = document.createElement("img");
+        deleteIcon.dataset.todoID = todo.id;
+        deleteIcon.dataset.projectID = project.id;
+        deleteIcon.classList.add("delete-todo");
         deleteIcon.src = deleteIconURL;
 
         let collapseIcon = document.createElement("img");
+        collapseIcon.dataset.todoID = todo.id;
+        collapseIcon.dataset.projectID = project.id;
+        collapseIcon.classList.add("collapse-todo");
         collapseIcon.id = "expandCollapse"
         collapseIcon.src = collapseIconURL
 
@@ -94,7 +117,7 @@ class ToDoRenderer {
         let expandIcon = document.createElement("img");
         expandIcon.dataset.todoID = todo.id;
         expandIcon.dataset.projectID = project.id;
-        expandIcon.classList.add("expand-project");
+        expandIcon.classList.add("expand-todo");
         expandIcon.id = "expandCollapse"
         expandIcon.src = expandIconURL;
 
@@ -114,7 +137,7 @@ class ToDoRenderer {
         targetDiv.append(lineTitle, lineDueDate);
     }
 
-    draw(mainDiv, todos) {
+    draw(mainDiv, todos, uiState) {
         this.clear();
 
         todos.projects.forEach(project => {
@@ -134,7 +157,8 @@ class ToDoRenderer {
                 todoDiv.dataset.id = todo.id;
                 projectDiv.append(todoDiv);
 
-                this.drawCollapsedTodo(project, todo);
+                if (uiState.expandedTodos[todo.id]) this.drawExpandedTodo(project, todo);
+                else this.drawCollapsedTodo(project, todo);
             })
         });
     }
@@ -168,8 +192,9 @@ function testSuiteHTML() {
     todoController.draw();
     todoController.moveTodo(todoController.system.projects[0].id, todoController.system.projects[1].id, todoController.system.projects[0].todos[0].id)
     todoController.draw();
-    todoController.expandTodo(todoController.system.projects[0].todos[0]);
+    todoController.expandTodo(todoController.system.projects[0], todoController.system.projects[0].todos[0]);
     todoController.collapseTodo(todoController.system.projects[0], todoController.system.projects[0].todos[0]);
+    console.log(todoController.uiState);
 }
 
 testSuiteHTML();
