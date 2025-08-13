@@ -1,7 +1,6 @@
 /*
     TODO
     -- Add todos
-    -- Add projects
     -- Persist to local storage
 */
 
@@ -13,6 +12,7 @@ import expandIconURL from "./icons/expand.svg";
 import editIconURL from "./icons/edit.svg"
 import saveIconURL from "./icons/save.svg"
 import cancelIconURL from "./icons/cancel.svg"
+import addIconURL from "./icons/add.svg"
 
 import ToDoSystem from "./todosystem.js";
 
@@ -83,7 +83,8 @@ class ToDoController {
             this.draw();
         }
         if (e.target.classList.contains("cancel-todo-edit")) {
-            this.uiState.todoState[e.target.dataset.todoID] = "expanded";
+            if (this.system.getProjectByID(e.target.dataset.projectID).getTodoByID(e.target.dataset.todoID).title === null) this.removeTodo(e.target.dataset.projectID, e.target.dataset.todoID);
+            else this.uiState.todoState[e.target.dataset.todoID] = "expanded";
             this.draw();
         }
         if (e.target.classList.contains("new-project-button")) {
@@ -92,6 +93,11 @@ class ToDoController {
         }
         if (e.target.classList.contains("delete-project")) {
             this.removeProject(e.target.dataset.projectID);
+            this.draw();
+        }
+        if (e.target.classList.contains("add-todo")) {
+            let id = this.system.addTodo(e.target.dataset.projectID, {});
+            this.uiState.todoState[id] = "editing";
             this.draw();
         }
     }
@@ -272,11 +278,18 @@ class ToDoRenderer {
 
             let projectIcons = document.createElement("div");
             projectIcons.classList.add("icons");
+
             let deleteProjectIcon = document.createElement("img");
             deleteProjectIcon.dataset.projectID = project.id;
             deleteProjectIcon.classList.add("delete-project");
             deleteProjectIcon.src = deleteIconURL;
-            projectIcons.append(deleteProjectIcon);
+
+            let addTodoIcon = document.createElement("img");
+            addTodoIcon.dataset.projectID = project.id;
+            addTodoIcon.classList.add("add-todo");
+            addTodoIcon.src = addIconURL;
+
+            projectIcons.append(addTodoIcon, deleteProjectIcon);
             projectDiv.append(projectIcons);
 
             let projectName = document.createElement("h2");
@@ -321,7 +334,6 @@ class ToDoRenderer {
 
 let todos = new ToDoSystem();
 let renderer = new ToDoRenderer();
-
 let todoController = new ToDoController(document.querySelector("div#projects"), todos, renderer);
 
 function testSuiteHTML() {

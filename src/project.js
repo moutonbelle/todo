@@ -10,7 +10,7 @@ export default class Project {
     }
 
     addTodo (todo) {
-        this.todos.push(todo);
+        this.todos.unshift(todo);
     }
 
     removeTodoByID (todoID) {
