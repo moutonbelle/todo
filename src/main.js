@@ -13,6 +13,8 @@ import deleteIconURL from "./icons/delete.svg";
 import collapseIconURL from "./icons/collapse.svg";
 import expandIconURL from "./icons/expand.svg";
 import editIconURL from "./icons/edit.svg"
+import saveIconURL from "./icons/save.svg"
+import cancelIconURL from "./icons/cancel.svg"
 
 import ToDoSystem from "./todosystem.js";
 
@@ -29,9 +31,9 @@ class ToDoController {
 
     addProject(projectName) { this.system.addProject(projectName); }
 
-    addTodo(projectID, todoData) { 
+    addTodo(projectID, todoData) {
         let id = this.system.addTodo(projectID, todoData);
-        this.uiState.todoState[id] = "collapsed"; 
+        this.uiState.todoState[id] = "collapsed";
     }
 
     removeTodo(projectID, todoID) { this.system.removeTodo(projectID, todoID); }
@@ -63,6 +65,10 @@ class ToDoController {
         }
         if (e.target.classList.contains("collapse-todo")) {
             this.uiState.todoState[e.target.dataset.todoID] = "collapsed";
+            this.draw();
+        }
+        if (e.target.classList.contains("edit-todo")) {
+            this.uiState.todoState[e.target.dataset.todoID] = "editing";
             this.draw();
         }
     }
@@ -152,10 +158,98 @@ class ToDoRenderer {
         targetDiv.append(lineTitle, lineDueDate);
     }
 
+    drawEditingTodo(project, todo) {
+        let targetDiv = document.querySelector(`div[data-id="${todo.id}"`);
+        targetDiv.replaceChildren();
+        let iconsDiv = document.createElement("div");
+        iconsDiv.classList.add("icons");
+
+        let cancelIcon = document.createElement("img");
+        cancelIcon.dataset.todoID = todo.id;
+        cancelIcon.dataset.projectID = project.id;
+        cancelIcon.classList.add("cancel-todo-edit");
+        cancelIcon.src = cancelIconURL;
+
+        let saveIcon = document.createElement("img");
+        saveIcon.dataset.todoID = todo.id;
+        saveIcon.dataset.projectID = project.id;
+        saveIcon.classList.add("save-todo");
+        saveIcon.src = saveIconURL;
+
+        iconsDiv.append(saveIcon, cancelIcon);
+        targetDiv.append(iconsDiv);
+
+        // Add title input
+        let newline = document.createElement("p");
+        let propertyName = document.createElement("strong");
+        propertyName.textContent = "Title: ";
+        let newInput = document.createElement("input");
+        newInput.dataset.todoID = todo.id;
+        newInput.dataset.projectID = project.id;
+        newInput.classList.add("input-title");
+        newline.append(propertyName, newInput);
+        targetDiv.append(newline);
+
+        // Add date input
+        newline = document.createElement("p");
+        propertyName = document.createElement("strong");
+        propertyName.textContent = "Due Date: ";
+        newInput = document.createElement("input");
+        newInput.type = "date";
+        newInput.dataset.todoID = todo.id;
+        newInput.dataset.projectID = project.id;
+        newInput.classList.add("input-date");
+        newline.append(propertyName, newInput);
+        targetDiv.append(newline);
+
+        // Add description input
+        newline = document.createElement("p");
+        propertyName = document.createElement("strong");
+        propertyName.textContent = "Description: ";
+        newInput = document.createElement("textarea");
+        newInput.dataset.todoID = todo.id;
+        newInput.dataset.projectID = project.id;
+        newInput.classList.add("input-description");
+        newline.append(propertyName, newInput);
+        targetDiv.append(newline);
+
+        // Add priority input
+        newline = document.createElement("p");
+        propertyName = document.createElement("strong");
+        propertyName.textContent = "Priority: ";
+        
+        newInput = document.createElement("select");
+        newInput.dataset.todoID = todo.id;
+        newInput.dataset.projectID = project.id;
+        newInput.classList.add("input-priority");
+
+        ["High", "Medium", "Low"].forEach(option => {
+            let newOption = document.createElement("option");
+            newOption.value = option;
+            newOption.textContent = option;
+            newInput.append(newOption);
+        });
+
+        newline.append(propertyName, newInput);
+        targetDiv.append(newline);
+
+        // for (let property in todo.formattedDetails) {
+        //     let line = document.createElement("p");
+        //     let propertyName = document.createElement("strong");
+        //     propertyName.textContent = property + ": ";
+
+        //     let propertyInput = document.createElement("input");
+        //     if (property === "Due Date") propertyInput.type = "date";
+        //     else if (property === "Description") propertyInput.type = "textarea"; 
+        //     else propertyInput.type = "text";
+
+        //     line.append(propertyName, propertyInput);
+        //     targetDiv.append(line);
+        // }
+    }
+
     draw(mainDiv, todos, uiState) {
         this.clear();
-
-        console.log(uiState);
 
         todos.projects.forEach(project => {
             let projectDiv = document.createElement("div");
@@ -174,8 +268,17 @@ class ToDoRenderer {
                 todoDiv.dataset.id = todo.id;
                 projectDiv.append(todoDiv);
 
-                if (uiState.todoState[todo.id] === "expanded") this.drawExpandedTodo(project, todo);
-                if (uiState.todoState[todo.id] === "collapsed") this.drawCollapsedTodo(project, todo);
+                switch (uiState.todoState[todo.id]) {
+                    case "expanded":
+                        this.drawExpandedTodo(project, todo);
+                        break;
+                    case "collapsed":
+                        this.drawCollapsedTodo(project, todo);
+                        break;
+                    case "editing":
+                        this.drawEditingTodo(project, todo);
+                        break;
+                }
             })
         });
     }
