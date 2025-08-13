@@ -7,9 +7,12 @@ import expandIconURL from "./icons/expand.svg";
 import ToDoSystem from "./todosystem.js";
 
 class ToDoController {
-    constructor(system, renderer) {
+    constructor(target, system, renderer) {
         this.system = system;
         this.renderer = renderer;
+        this.target = target;
+
+        target.addEventListener("click", this.clickHandler);
     }
 
     addProject(projectName) { this.system.addProject(projectName); }
@@ -22,9 +25,19 @@ class ToDoController {
 
     moveTodo(oldProjectID, newProjectID, todoID) { this.system.moveTodo(oldProjectID, newProjectID, todoID) }
 
-    expandTodo(todo) { this.renderer.drawExpandedTodo(todo); }
+    expandTodo(todo) { this.renderer.drawExpandedTodo(todo);}
 
-    collapseTodo(todo) { this.renderer.drawCollapsedTodo(todo); }
+    collapseTodo(project, todo) { this.renderer.drawCollapsedTodo(project, todo);}
+
+    draw() {renderer.draw(this.target, this.system);}
+
+    clickHandler = (e) => {
+        if (e.target.classList.contains("delete-todo")) {
+            this.removeTodo(e.target.dataset.projectID, e.target.dataset.todoID);
+            this.draw();
+        }
+    }
+
 }
 
 class ToDoRenderer {
@@ -52,7 +65,7 @@ class ToDoRenderer {
 
         let collapseIcon = document.createElement("img");
         collapseIcon.id = "expandCollapse"
-        collapseIcon.src = collapseIconURL;
+        collapseIcon.src = collapseIconURL
 
         iconsDiv.append(collapseIcon, deleteIcon);
         targetDiv.append(iconsDiv);
@@ -66,16 +79,22 @@ class ToDoRenderer {
         }
     }
 
-    drawCollapsedTodo(todo) {
+    drawCollapsedTodo(project, todo) {
         let targetDiv = document.querySelector(`div[data-id="${todo.id}"`);
         targetDiv.replaceChildren();
         let iconsDiv = document.createElement("div");
         iconsDiv.classList.add("icons");
 
         let deleteIcon = document.createElement("img");
+        deleteIcon.dataset.todoID = todo.id;
+        deleteIcon.dataset.projectID = project.id;
+        deleteIcon.classList.add("delete-todo");
         deleteIcon.src = deleteIconURL;
 
         let expandIcon = document.createElement("img");
+        expandIcon.dataset.todoID = todo.id;
+        expandIcon.dataset.projectID = project.id;
+        expandIcon.classList.add("expand-project");
         expandIcon.id = "expandCollapse"
         expandIcon.src = expandIconURL;
 
@@ -95,9 +114,8 @@ class ToDoRenderer {
         targetDiv.append(lineTitle, lineDueDate);
     }
 
-    draw(todos) {
+    draw(mainDiv, todos) {
         this.clear();
-        let mainDiv = document.querySelector("div#projects");
 
         todos.projects.forEach(project => {
             let projectDiv = document.createElement("div");
@@ -116,7 +134,7 @@ class ToDoRenderer {
                 todoDiv.dataset.id = todo.id;
                 projectDiv.append(todoDiv);
 
-                this.drawCollapsedTodo(todo);
+                this.drawCollapsedTodo(project, todo);
             })
         });
     }
@@ -125,7 +143,7 @@ class ToDoRenderer {
 let todos = new ToDoSystem();
 let renderer = new ToDoRenderer();
 
-let todoController = new ToDoController(todos, renderer);
+let todoController = new ToDoController(document.querySelector("div#projects"), todos, renderer);
 
 function testSuite() {
     todoController.addProject("Tiger");
@@ -140,17 +158,18 @@ function testSuite() {
 }
 
 function testSuiteHTML() {
+    let mainDiv = document.querySelector("div#projects");
     todoController.addProject("Tiger");
     todoController.addProject("Dolphin");
     todoController.addTodo(todoController.system.projects[0].id, { title: "Fetch tiger", description: "Go to the jungle, catch the tiger, and return him", dueDate: "05-15-1999", priority: "high" });
     todoController.addTodo(todoController.system.projects[0].id, { title: "Tame parrot", description: "Find a beautiful parrot and slowly charm it with food and pets", dueDate: "12-03-2001", priority: "medium" });
-    todoController.renderer.draw(todoController.system);
+    todoController.draw();
     todoController.updateTodo(todoController.system.projects[0].id, todoController.system.projects[0].todos[0].id, { description: "Go to the North of India, find a tiger, catch him with bait, and return him, no exceptions", dueDate: "06-16-2023" });
-    todoController.renderer.draw(todoController.system);
+    todoController.draw();
     todoController.moveTodo(todoController.system.projects[0].id, todoController.system.projects[1].id, todoController.system.projects[0].todos[0].id)
-    todoController.renderer.draw(todoController.system);
+    todoController.draw();
     todoController.expandTodo(todoController.system.projects[0].todos[0]);
-    todoController.collapseTodo(todoController.system.projects[0].todos[0]);
+    todoController.collapseTodo(todoController.system.projects[0], todoController.system.projects[0].todos[0]);
 }
 
 testSuiteHTML();
