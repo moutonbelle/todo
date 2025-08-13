@@ -71,6 +71,17 @@ class ToDoController {
             this.uiState.todoState[e.target.dataset.todoID] = "editing";
             this.draw();
         }
+        if (e.target.classList.contains("save-todo")) {
+            let updates = {
+                title: document.querySelector(".input-title").value,
+                dueDate: document.querySelector(".input-date").value,
+                description: document.querySelector(".input-description").value,
+                priority: document.querySelector(".input-priority").value,
+            }
+            this.updateTodo(e.target.dataset.projectID, e.target.dataset.todoID, updates)
+            this.uiState.todoState[e.target.dataset.todoID] = "expanded";
+            this.draw();
+        }
     }
 
 }
@@ -187,6 +198,7 @@ class ToDoRenderer {
         newInput.dataset.todoID = todo.id;
         newInput.dataset.projectID = project.id;
         newInput.classList.add("input-title");
+        newInput.value = todo.title;
         newline.append(propertyName, newInput);
         targetDiv.append(newline);
 
@@ -199,6 +211,8 @@ class ToDoRenderer {
         newInput.dataset.todoID = todo.id;
         newInput.dataset.projectID = project.id;
         newInput.classList.add("input-date");
+        let todoDate = new Date(todo.dueDate);
+        newInput.value = `${todoDate.getFullYear()}-${String(todoDate.getMonth() + 1).padStart(2, '0')}-${String(todoDate.getDate()).padStart(2, '0')}`;
         newline.append(propertyName, newInput);
         targetDiv.append(newline);
 
@@ -210,6 +224,7 @@ class ToDoRenderer {
         newInput.dataset.todoID = todo.id;
         newInput.dataset.projectID = project.id;
         newInput.classList.add("input-description");
+        newInput.value = todo.description;
         newline.append(propertyName, newInput);
         targetDiv.append(newline);
 
@@ -227,6 +242,7 @@ class ToDoRenderer {
             let newOption = document.createElement("option");
             newOption.value = option;
             newOption.textContent = option;
+            if (option === todo.priority) newOption.selected = true;
             newInput.append(newOption);
         });
 
@@ -293,8 +309,8 @@ function testSuiteHTML() {
     let mainDiv = document.querySelector("div#projects");
     todoController.addProject("Tiger");
     todoController.addProject("Dolphin");
-    todoController.addTodo(todoController.system.projects[0].id, { title: "Fetch tiger", description: "Go to the jungle, catch the tiger, and return him", dueDate: "05-15-1999", priority: "high" });
-    todoController.addTodo(todoController.system.projects[0].id, { title: "Tame parrot", description: "Find a beautiful parrot and slowly charm it with food and pets", dueDate: "12-03-2001", priority: "medium" });
+    todoController.addTodo(todoController.system.projects[0].id, { title: "Fetch tiger", description: "Go to the jungle, catch the tiger, and return him", dueDate: "05-15-1999", priority: "High" });
+    todoController.addTodo(todoController.system.projects[0].id, { title: "Tame parrot", description: "Find a beautiful parrot and slowly charm it with food and pets", dueDate: "12-03-2001", priority: "Medium" });
     todoController.draw();
     todoController.updateTodo(todoController.system.projects[0].id, todoController.system.projects[0].todos[0].id, { description: "Go to the North of India, find a tiger, catch him with bait, and return him, no exceptions", dueDate: "06-16-2023" });
     todoController.draw();
