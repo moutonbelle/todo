@@ -16,9 +16,9 @@ import addIconURL from "./icons/add.svg"
 import ToDoSystem from "./todosystem.js";
 
 class ToDoController {
-    constructor(target, system, renderer) {
-        this.system = system;
-        this.renderer = renderer;
+    constructor(target) {
+        this.system = new ToDoSystem();
+        this.renderer = new ToDoRenderer();
         this.target = target;
 
         this.uiState = {};
@@ -56,7 +56,7 @@ class ToDoController {
         this.uiState.todoState[todo.id] = "collapsed";
     }
 
-    draw() { renderer.draw(this.target, this.system, this.uiState); }
+    draw() { this.renderer.draw(this.target, this.system, this.uiState); }
 
     save() {
         localStorage.clear();
@@ -367,6 +367,4 @@ class ToDoRenderer {
     }
 }
 
-let todos = new ToDoSystem();
-let renderer = new ToDoRenderer();
-let todoController = new ToDoController(document.querySelector("div#projects"), todos, renderer);
+let todoController = new ToDoController(document.querySelector("div#projects"));
