@@ -82,6 +82,10 @@ class ToDoController {
             this.uiState.todoState[e.target.dataset.todoID] = "expanded";
             this.draw();
         }
+        if (e.target.classList.contains("cancel-todo-edit")) {
+            this.uiState.todoState[e.target.dataset.todoID] = "expanded";
+            this.draw();
+        }
     }
 
 }
