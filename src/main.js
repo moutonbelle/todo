@@ -29,6 +29,8 @@ class ToDoController {
 
     addProject(projectName) { this.system.addProject(projectName); }
 
+    removeProject(projectID) { this.system.removeProject(projectID); }
+
     addTodo(projectID, todoData) {
         let id = this.system.addTodo(projectID, todoData);
         this.uiState.todoState[id] = "collapsed";
@@ -86,6 +88,10 @@ class ToDoController {
         }
         if (e.target.classList.contains("new-project-button")) {
             this.addProject(document.querySelector(".input-project-name").value);
+            this.draw();
+        }
+        if (e.target.classList.contains("delete-project")) {
+            this.removeProject(e.target.dataset.projectID);
             this.draw();
         }
     }
@@ -254,20 +260,6 @@ class ToDoRenderer {
 
         newline.append(propertyName, newInput);
         targetDiv.append(newline);
-
-        // for (let property in todo.formattedDetails) {
-        //     let line = document.createElement("p");
-        //     let propertyName = document.createElement("strong");
-        //     propertyName.textContent = property + ": ";
-
-        //     let propertyInput = document.createElement("input");
-        //     if (property === "Due Date") propertyInput.type = "date";
-        //     else if (property === "Description") propertyInput.type = "textarea"; 
-        //     else propertyInput.type = "text";
-
-        //     line.append(propertyName, propertyInput);
-        //     targetDiv.append(line);
-        // }
     }
 
     draw(mainDiv, todos, uiState) {

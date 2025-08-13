@@ -14,6 +14,11 @@ export default class ToDoSystem {
         let newProject = new Project(projectName);
         this.projects.push(newProject);
     }
+    
+    removeProject (projectID) {
+        console.log(this.projects.findIndex(project => project.id === projectID));
+        this.projects.splice(this.projects.findIndex(project => project.id === projectID), 1);
+    }
 
     addTodo (projectID, todoData) {
         let newTodo = new Todo(todoData);
