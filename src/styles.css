@@ -2,10 +2,23 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    font-family: 'Iowan Old Style', 'Palatino Linotype', 'URW Palladio L', P052, serif;
+font-weight: normal;;
 }
 
 body {
     padding: 20px;
+}
+
+input {
+        padding: 0.2rem 0.5rem;
+        border-radius: 5px;
+        border: 1px solid black;
+}
+
+textarea {
+    display: block;
+    width: 100%;
 }
 
 div#projects {
@@ -39,7 +52,7 @@ div.todo {
 
 div.icons {
     position: absolute;
-    top: 10px;
+    top: 10gitpx;
     right: 10px;
 
     display: flex;
@@ -55,13 +68,6 @@ div.new-project-container {
     flex: 0 0 350px;
     background-color: palegreen;
     padding: 20px;
-
-    & input {
-        padding: 0.2rem 1rem;
-        border-radius: 5px;
-        border: 1px solid black;
-        width: 100%;
-    }
 
     & button {
         padding: 0.2rem 1rem;

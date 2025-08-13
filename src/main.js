@@ -1,6 +1,5 @@
 /*
     TODO
-    -- Add todos
     -- Persist to local storage
 */
 
@@ -241,6 +240,7 @@ class ToDoRenderer {
         newInput = document.createElement("textarea");
         newInput.dataset.todoID = todo.id;
         newInput.dataset.projectID = project.id;
+        newInput.rows = 5;
         newInput.classList.add("input-description");
         newInput.value = todo.description;
         newline.append(propertyName, newInput);
