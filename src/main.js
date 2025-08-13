@@ -278,6 +278,15 @@ class ToDoRenderer {
             projectDiv.classList.add("project");
             projectDiv.dataset.id = project.id;
 
+            let projectIcons = document.createElement("div");
+            projectIcons.classList.add("icons");
+            let deleteProjectIcon = document.createElement("img");
+            deleteProjectIcon.dataset.projectID = project.id;
+            deleteProjectIcon.classList.add("delete-project");
+            deleteProjectIcon.src = deleteIconURL;
+            projectIcons.append(deleteProjectIcon);
+            projectDiv.append(projectIcons);
+
             let projectName = document.createElement("h2");
             projectName.classList.add("project-name");
             projectName.textContent = project.name;
