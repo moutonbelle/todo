@@ -16,7 +16,6 @@ export default class ToDoSystem {
     }
     
     removeProject (projectID) {
-        console.log(this.projects.findIndex(project => project.id === projectID));
         this.projects.splice(this.projects.findIndex(project => project.id === projectID), 1);
     }
 

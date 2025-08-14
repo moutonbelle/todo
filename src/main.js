@@ -1,8 +1,3 @@
-/*
-    TODO
-    -- Persist to local storage
-*/
-
 import "./styles.css";
 
 import deleteIconURL from "./icons/delete.svg";
