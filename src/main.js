@@ -362,4 +362,4 @@ class ToDoRenderer {
     }
 }
 
-let todoController = new ToDoController(document.querySelector("div#projects"));
+new ToDoController(document.querySelector("div#projects"));
